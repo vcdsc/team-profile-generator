@@ -108,3 +108,30 @@ const internPrompt = [
   },
 ];
 // <=== FEED INQUIRER PROMPTS END
+
+// The triggerTeamBuilder function will allows to start the process of building a team, by capturing the necessary details to generate the first team member, the Manager.
+function triggerTeamBuilder() {
+  // The below message is displayed in the terminal once index.js is triggered to run through Node.js.
+  console.log(
+    "Let's build you a Team! :) Just follow the prompts and this will be generated for you."
+  );
+
+  // We will use the employees variable to hold the members of our team.
+  const employees = [];
+
+  inquirer.prompt(managerPrompt).then((data) => {
+    // We are using the input collected through the Inquirer prompts to instantiate the Manager class.
+    const manager = new Manager(
+      data.managerName,
+      data.managerId,
+      data.managerEmail,
+      data.managerOfficeNumber
+    );
+
+    // We then add our newly created manager to our array of employees.
+    employees.push(manager);
+    console.log(employees);
+  });
+}
+
+triggerTeamBuilder();

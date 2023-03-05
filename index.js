@@ -144,7 +144,7 @@ triggerTeamBuilder();
 function addEmployee(employees) {
   inquirer.prompt(addTeamMemberPrompt).then((data) => {
     if (data.addTeamMember === "addEngineer") {
-      // If the User opts to add an Engineer to the team, their input is used to build a new instance of the Engineer class.
+      // vcdsc_addEmployee_2: If the User opts to add an Engineer to the team, their input is used to build a new instance of the Engineer class.
       inquirer.prompt(engineerPrompt).then((data) => {
         const engineer = new Engineer(
           data.engineerName,
@@ -153,14 +153,14 @@ function addEmployee(employees) {
           data.engineerGitHub
         );
 
-        // This new instance of the Engineer class is then added to the employees array.
+        // vcdsc_addEmployee_3: This new instance of the Engineer class is then added to the employees array.
         employees.push(engineer);
 
-        // Every time we do this (i.e. add an Engineer to the team) our employees array will be updated with the newly added employee.
+        // vcdsc_addEmployee_4: Every time we do this (i.e. add an Engineer to the team) our employees array will be updated with the newly added employee.
         addEmployee(employees);
       });
     } else if (data.addTeamMember === "addIntern") {
-      // If the User opts to add an Intern to the team, their input is used to build a new instance of the Intern class.
+      // vcdsc_addEmployee_5: If the User opts to add an Intern to the team, their input is used to build a new instance of the Intern class.
       inquirer.prompt(internPrompt).then((data) => {
         const intern = new Intern(
           data.internName,
@@ -169,16 +169,34 @@ function addEmployee(employees) {
           data.internSchool
         );
 
-        // This new instance of the Engineer class is then added to the employees array.
+        // vcdsc_addEmployee_6: This new instance of the Engineer class is then added to the employees array.
         employees.push(intern);
 
-        // Every time we do this (i.e. add an Intern to the team) our employees array will be updated with the newly added employee.
+        // vcdsc_addEmployee_7: Every time we do this (i.e. add an Intern to the team) our employees array will be updated with the newly added employee.
         addEmployee(employees);
       });
     } else {
-      // In order to effectively use Recursion, the function must have a condition to stop calling itself. In this case, if we are neither adding an Engineer or an Intern this means we are done building our team, hence the addEmployee function will stop calling itself.
-      console.log(employees);
+      // vcdsc_addEmployee_8: In order to effectively use Recursion, the function must have a condition to stop calling itself. In this case, if we are neither adding an Engineer or an Intern this means we are done building our team, hence we can generate the HTML for it and the addEmployee function will stop calling itself.
+      buildTeamHTMLPage(employees);
       return;
     }
+  });
+}
+
+// vcdsc_buildTeamHTMLPage_1: Once all User input has been collected through Inquirer and saved into the employees are, we now want to 1) make use of the render function provided and 2) create an HTML file using the HTML returned from the previous step.
+function buildTeamHTMLPage(employees) {
+  // vcdsc_buildTeamHTMLPage_2: fs.mkdir generates the directory where our file will live should it not exist; as for the recursive option, if our file directory was dependant on other directories, it would generate those as well, to ensure the file was placed in the correct directory.
+  fs.mkdir(OUTPUT_DIR, { recursive: true }, (error) => {
+    if (error) throw error;
+  });
+
+  // vcdsc_buildTeamHTMLPage_3: Whatever input we collected through our triggerTeamBuild and addEmployee functions will now be used to generate the HTML for the page.
+  const teamMembers = render(employees);
+  return fs.writeFile(outputPath, teamMembers, (error) => {
+    error
+      ? console.log(error)
+      : console.log(
+          "Done! Please open `index.html` in the browser to view your newly created Team. :)"
+        );
   });
 }

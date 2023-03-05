@@ -109,18 +109,18 @@ const internPrompt = [
 ];
 // <=== FEED INQUIRER PROMPTS END
 
-// The triggerTeamBuilder function will allows to start the process of building a team, by capturing the necessary details to generate the first team member, the Manager.
+// vcdsc_triggerTeamBuilder_1: The triggerTeamBuilder function will allows to start the process of building a team, by capturing the necessary details to generate the first team member, the Manager.
 function triggerTeamBuilder() {
   // The below message is displayed in the terminal once index.js is triggered to run through Node.js.
   console.log(
     "Let's build you a Team! :) Just follow the prompts and this will be generated for you."
   );
 
-  // We will use the employees variable to hold the members of our team.
+  // vcdsc_triggerTeamBuilder_2: We will use the employees variable to hold the members of our team.
   const employees = [];
 
   inquirer.prompt(managerPrompt).then((data) => {
-    // We are using the input collected through the Inquirer prompts to instantiate the Manager class.
+    // vcdsc_triggerTeamBuilder_3: We are using the input collected through the Inquirer prompts to instantiate the Manager class.
     const manager = new Manager(
       data.managerName,
       data.managerId,
@@ -128,10 +128,25 @@ function triggerTeamBuilder() {
       data.managerOfficeNumber
     );
 
-    // We then add our newly created manager to our array of employees.
+    // vcdsc_triggerTeamBuilder_4: We then add our newly created manager to our array of employees.
     employees.push(manager);
-    console.log(employees);
+
+    addEmployee(employees);
   });
 }
 
 triggerTeamBuilder();
+
+// vcdsc_addEmployee_1: The addEmployee function will allow us to select between the following options: 1) add an Engineer to the Team, 2) add an Intern to the Team, or 3) mark the team as complete. Until such a point where option 3 is selected, User should be prompted to enter the necessary details to create either an Engineer or an Intern and add them to the team.
+function addEmployee(employees) {
+  inquirer.prompt(addTeamMemberPrompt).then((data) => {
+    // vcdsc_addEmployee_2: If after adding the Manager we are done with creating our Team, we can log the current team, which will be just the Manager.
+    if (data.addTeamMember === "isTeamComplete") {
+      console.log(employees);
+      return;
+      //  vcdsc_addEmployee_3: If we wanted to keep adding team members, further logic needs to be added.
+    } else {
+      console.log("Work in progress...");
+    }
+  });
+}

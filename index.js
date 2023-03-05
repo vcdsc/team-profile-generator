@@ -13,7 +13,7 @@ const render = require("./src/page-template.js");
 // TODO: Write Code to gather information about the development team members, and render the HTML file.
 
 // ===> FEED INQUIRER PROMPTS START
-// vcdsc_prompts_1: First member of Team to be added is always Manager. Because the Manager class extends the Employee class, and we will need to create an instance of Manager later, we need to ensure that managerPrompt contains all the properties the Manager class requires.
+// vcdsc_prompts_1: First member of team to be added is always Manager. Because the Manager class extends the Employee class, and we will need to create an instance of Manager later, we need to ensure that managerPrompt contains all the properties the Manager class requires.
 const managerPrompt = [
   {
     type: "input",
@@ -109,7 +109,7 @@ const internPrompt = [
 ];
 // <=== FEED INQUIRER PROMPTS END
 
-// vcdsc_triggerTeamBuilder_1: The triggerTeamBuilder function will allows to start the process of building a team, by capturing the necessary details to generate the first team member, the Manager.
+// vcdsc_triggerTeamBuilder_1: The triggerTeamBuilder function will allows to start the process of building a Team, by capturing the necessary details to generate the first team member, the Manager.
 function triggerTeamBuilder() {
   // The below message is displayed in the terminal once index.js is triggered to run through Node.js.
   console.log(
@@ -137,16 +137,48 @@ function triggerTeamBuilder() {
 
 triggerTeamBuilder();
 
-// vcdsc_addEmployee_1: The addEmployee function will allow us to select between the following options: 1) add an Engineer to the Team, 2) add an Intern to the Team, or 3) mark the team as complete. Until such a point where option 3 is selected, User should be prompted to enter the necessary details to create either an Engineer or an Intern and add them to the team.
+// vcdsc_addEmployee_1: The addEmployee function will allow us to select between the following options: 1) add an Engineer to the team, 2) add an Intern to the team, or 3) mark the team as complete. Until such a point where option 3 is selected, User should be prompted to enter the necessary details to create either an Engineer or an Intern and add them to the team.
+// Using this example:
+// https://github.com/SBoudrias/Inquirer.js/blob/master/packages/inquirer/examples/recursive.js
+// Made the addEmployee function into a recursive function; until we tell it to stop (once the team is complete) it will keep updating the employees array with either new instances of Engineers and/or Interns.
 function addEmployee(employees) {
   inquirer.prompt(addTeamMemberPrompt).then((data) => {
-    // vcdsc_addEmployee_2: If after adding the Manager we are done with creating our Team, we can log the current team, which will be just the Manager.
-    if (data.addTeamMember === "isTeamComplete") {
+    if (data.addTeamMember === "addEngineer") {
+      // If the User opts to add an Engineer to the team, their input is used to build a new instance of the Engineer class.
+      inquirer.prompt(engineerPrompt).then((data) => {
+        const engineer = new Engineer(
+          data.engineerName,
+          data.engineerId,
+          data.engineerEmail,
+          data.engineerGitHub
+        );
+
+        // This new instance of the Engineer class is then added to the employees array.
+        employees.push(engineer);
+
+        // Every time we do this (i.e. add an Engineer to the team) our employees array will be updated with the newly added employee.
+        addEmployee(employees);
+      });
+    } else if (data.addTeamMember === "addIntern") {
+      // If the User opts to add an Intern to the team, their input is used to build a new instance of the Intern class.
+      inquirer.prompt(internPrompt).then((data) => {
+        const intern = new Intern(
+          data.internName,
+          data.internId,
+          data.internEmail,
+          data.internSchool
+        );
+
+        // This new instance of the Engineer class is then added to the employees array.
+        employees.push(intern);
+
+        // Every time we do this (i.e. add an Intern to the team) our employees array will be updated with the newly added employee.
+        addEmployee(employees);
+      });
+    } else {
+      // In order to effectively use Recursion, the function must have a condition to stop calling itself. In this case, if we are neither adding an Engineer or an Intern this means we are done building our team, hence the addEmployee function will stop calling itself.
       console.log(employees);
       return;
-      //  vcdsc_addEmployee_3: If we wanted to keep adding team members, further logic needs to be added.
-    } else {
-      console.log("Work in progress...");
     }
   });
 }
